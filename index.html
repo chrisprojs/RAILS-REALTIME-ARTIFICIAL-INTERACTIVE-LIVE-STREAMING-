@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Classification</title>
+</head>
+<body>
+    <h1>Text Classification</h1>
+    <input type="text" id="inputText" placeholder="Enter text to classify">
+    <button onclick="classifyText()">Classify</button>
+    <p id="result"></p>
+
+    <script>
+        async function classifyText() {
+            const inputText = document.getElementById('inputText').value;
+            if (!inputText) {
+                document.getElementById('result').innerText = 'Error: Please enter some text to classify';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/classify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: inputText })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                document.getElementById('result').innerText = result.label ? `Label: ${result.label}` : `Error: ${result.error}`;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Error: Failed to classify text';
+            }
+        }
+    </script>
+</body>
+</html>
